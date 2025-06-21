@@ -28,14 +28,15 @@ jobs:
     - name: Prepare data folder
       run: |
         mkdir -p data
-        shopt -s nullglob
-        cp -v *.{html,css,js,png,jpg,jpeg,ico,woff,ttf} data/ || true
-        echo "Files copied to /data:"
-        ls -l data
+        cp -v *.html *.css *.js data/ || true
+        echo "✅ Data folder content:"
+        ls -lh data
 
-    - name: Build SPIFFS image (matches partitions.csv)
+    - name: Build SPIFFS image
       run: |
         mkspiffs -c data -b 4096 -p 256 -s 0x170000 spiffs.bin
+        echo "✅ spiffs.bin built with:"
+        mkspiffs -l spiffs.bin
 
     - name: Upload SPIFFS binary
       uses: actions/upload-artifact@v4
