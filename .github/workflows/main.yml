@@ -11,39 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Create data folder and move all site files
-      run: |
-        mkdir -p data
-        echo "Copying HTML/CSS/JS files into ./data/"
-        find . -type f -iname "*.html" -o -iname "*.css" -o -iname "*.js" -exec cp --parents -v {} data/ \;
+      - name: Create data folder and move all site files
+        run: |
+          mkdir -p data
+          echo "Copying HTML/CSS/JS files into ./data/"
+          find . -type f -iname "*.html" -o -iname "*.css" -o -iname "*.js" -exec cp --parents -v {} data/ \;
 
-    - name: Confirm files copied
-      run: |
-        echo "Files in ./data:"
-        find data -type f
+      - name: Confirm files copied
+        run: |
+          echo "Files in ./data:"
+          find data -type f
 
-    - name: Install build dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y g++ git make
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y g++ git make
 
-    - name: Clone and build mkspiffs
-      run: |
-        git clone --recursive https://github.com/igrr/mkspiffs.git
-        cd mkspiffs
-        make
-        sudo cp mkspiffs /usr/local/bin/
+      - name: Clone and build mkspiffs
+        run: |
+          git clone --recursive https://github.com/igrr/mkspiffs.git
+          cd mkspiffs
+          make
+          sudo cp mkspiffs /usr/local/bin/
 
-    - name: Build SPIFFS image
-      run: |
-        echo "Building spiffs.bin with size 0x170000"
-        mkspiffs -c data -b 4096 -p 256 -s 0x170000 spiffs.bin
+      - name: Build SPIFFS image
+        run: |
+          echo "Building spiffs.bin with size 0x170000"
+          mkspiffs -c data -b 4096 -p 256 -s 0x170000 spiffs.bin
 
-    - name: Upload SPIFFS binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: spiffs
-        path: spiffs.bin
+      - name: Upload SPIFFS binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: spiffs
+          path: spiffs.bin
