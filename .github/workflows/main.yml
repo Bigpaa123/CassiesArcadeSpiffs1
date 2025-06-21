@@ -28,8 +28,9 @@ jobs:
     - name: Prepare data folder
       run: |
         mkdir -p data
-        cp -v *.html *.css *.js data/ || true
-        echo "Data folder content:"
+        shopt -s nullglob
+        cp -v *.{html,css,js,png,jpg,jpeg,ico,woff,ttf} data/ || true
+        echo "Files copied to /data:"
         ls -l data
 
     - name: Build SPIFFS image (matches partitions.csv)
@@ -41,4 +42,3 @@ jobs:
       with:
         name: spiffs
         path: spiffs.bin
-        
