@@ -2,8 +2,7 @@ name: build-spiffs
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -13,13 +12,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Prepare data folder
-      run: |
-        mkdir -p data
-        cp -v *.html *.css *.js data/ || true
-        echo "Files copied to data/"
-        ls -la data
 
     - name: Install build dependencies
       run: |
@@ -35,7 +27,7 @@ jobs:
 
     - name: Build SPIFFS image (size = 0x290000)
       run: |
-        mkspiffs -c data -b 4096 -p 256 -s 0x290000 spiffs.bin
+        mkspiffs -c Data -b 4096 -p 256 -s 0x290000 spiffs.bin
 
     - name: Upload SPIFFS binary
       uses: actions/upload-artifact@v4
