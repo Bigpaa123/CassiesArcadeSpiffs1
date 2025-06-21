@@ -35,7 +35,7 @@ jobs:
 
     - name: Build SPIFFS image
       run: |
-        mkspiffs -c data -b 4096 -p 256 -s 0x310000 spiffs.bin
+        mkspiffs -c data -b 4096 -p 256 -s 0x290000 spiffs.bin
 
     - name: Upload SPIFFS binary
       uses: actions/upload-artifact@v4
