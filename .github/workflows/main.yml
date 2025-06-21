@@ -25,12 +25,20 @@ jobs:
         make
         sudo cp mkspiffs /usr/local/bin/
 
-    - name: Build SPIFFS image (size = 0x290000)
+    - name: Prepare data folder
       run: |
-        mkspiffs -c Data -b 4096 -p 256 -s 0x290000 spiffs.bin
+        mkdir -p data
+        cp -v *.html *.css *.js data/ || true
+        echo "Data folder content:"
+        ls -l data
+
+    - name: Build SPIFFS image (matches partitions.csv)
+      run: |
+        mkspiffs -c data -b 4096 -p 256 -s 0x170000 spiffs.bin
 
     - name: Upload SPIFFS binary
       uses: actions/upload-artifact@v4
       with:
         name: spiffs
         path: spiffs.bin
+        
