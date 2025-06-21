@@ -17,12 +17,14 @@ jobs:
       - name: Create data folder and move all site files
         run: |
           mkdir -p data
-          echo "Copying HTML/CSS/JS files into ./data/"
-          find . -type f -iname "*.html" -o -iname "*.css" -o -iname "*.js" -exec cp --parents -v {} data/ \;
+          echo "Copying HTML, CSS, and JS files to ./data/"
+          for ext in html css js; do
+            find . -type f -iname "*.$ext" -exec cp --parents -v {} data/ \;
+          done
 
       - name: Confirm files copied
         run: |
-          echo "Files in ./data:"
+          echo "Files copied to ./data:"
           find data -type f
 
       - name: Install build dependencies
