@@ -1,4 +1,4 @@
-name: build-spiffs
+name: Build SPIFFS
 
 on:
   push:
@@ -10,35 +10,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: 📥 Checkout code
       uses: actions/checkout@v3
 
-    - name: Install build dependencies
+    - name: 🧰 Install build dependencies
       run: |
         sudo apt update
         sudo apt install -y g++ git make
 
-    - name: Clone and build mkspiffs
+    - name: 🛠️ Clone and build mkspiffs
       run: |
         git clone --recursive https://github.com/igrr/mkspiffs.git
         cd mkspiffs
         make
         sudo cp mkspiffs /usr/local/bin/
 
-    - name: Prepare data folder
+    - name: 📂 Prepare data folder
       run: |
         mkdir -p data
-        cp -v *.html *.css *.js data/ || true
+        shopt -s nullglob
+        files=( *.html *.css *.js )
+        if [ ${#files[@]} -eq 0 ]; then
+          echo "❌ No HTML/CSS/JS files found to copy to SPIFFS. Aborting."
+          exit 1
+        fi
+        cp -v "${files[@]}" data/
         echo "✅ Data folder content:"
-        ls -lh data
+        ls -l data
 
-    - name: Build SPIFFS image
+    - name: 📦 Build SPIFFS image (matches partitions.csv)
       run: |
         mkspiffs -c data -b 4096 -p 256 -s 0x170000 spiffs.bin
-        echo "✅ spiffs.bin built with:"
-        mkspiffs -l spiffs.bin
+        echo "✅ SPIFFS image built."
 
-    - name: Upload SPIFFS binary
+    - name: 🔍 Inspect SPIFFS binary
+      run: |
+        echo "🧠 First 20 lines of SPIFFS:"
+        hexdump -C spiffs.bin | head -n 20
+
+    - name: ⬆️ Upload SPIFFS binary
       uses: actions/upload-artifact@v4
       with:
         name: spiffs
