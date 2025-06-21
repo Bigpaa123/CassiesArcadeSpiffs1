@@ -1,48 +1,69 @@
-#include <WiFi.h>
-#include <WebServer.h>
-#include <FS.h>
-#include <SPIFFS.h>
-
-WebServer server(80);
-const char* ssid = "Cassies_Arcade";
-const char* password = "play1234";
-
-String getContentType(const String& filename) {
-  if (filename.endsWith(".html")) return "text/html";
-  if (filename.endsWith(".css")) return "text/css";
-  if (filename.endsWith(".js")) return "application/javascript";
-  if (filename.endsWith(".png")) return "image/png";
-  if (filename.endsWith(".jpg")) return "image/jpeg";
-  if (filename.endsWith(".ico")) return "image/x-icon";
-  return "text/plain";
-}
-
-void handleNotFound() {
-  String path = server.uri();
-  if (path == "/") path = "/index.html";
-  if (SPIFFS.exists(path)) {
-    File file = SPIFFS.open(path, FILE_READ);
-    server.streamFile(file, getContentType(path));
-    file.close();
-  } else {
-    server.send(404, "text/plain", "404: File Not Found");
-  }
-}
-
-void setup() {
-  Serial.begin(115200);
-  WiFi.softAP(ssid, password);
-  Serial.println("WiFi AP Started");
-  Serial.println(WiFi.softAPIP());
-  if (!SPIFFS.begin(true)) {
-    Serial.println("SPIFFS Mount Failed");
-    return;
-  }
-  server.onNotFound(handleNotFound);
-  server.begin();
-  Serial.println("HTTP Server Started");
-}
-
-void loop() {
-  server.handleClient();
-}
+<!-- DEMIS ARCADE - index.html --><!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEMIS ARCADE</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #ff4081;
+    }
+    .game-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .game-button {
+      background-color: #1f1f1f;
+      color: #ffffff;
+      border: 2px solid #ff4081;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 10px;
+      width: 160px;
+      height: 80px;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+    }
+    .game-button:hover {
+      background-color: #ff4081;
+      color: #121212;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Welcome to DEMIS ARCADE 🎮</h1>
+  <p>Touch to play. No internet needed!</p>
+  <div class="game-list">
+    <a href="snake.html" class="game-button">🐍 Snake</a>
+    <a href="tictactoe.html" class="game-button">❌⭕ Tic Tac Toe</a>
+    <a href="memory.html" class="game-button">🧠 Memory</a>
+    <a href="slidepuzzle.html" class="game-button">🧩 Slide Puzzle</a>
+    <a href="simonsays.html" class="game-button">🔴 Simon Says</a>
+    <a href="breakout.html" class="game-button">🏓 Breakout</a>
+    <a href="pianotiles.html" class="game-button">🎵 Piano Tiles</a>
+    <a href="drawpad.html" class="game-button">🎨 Draw Pad</a>
+    <a href="bubblepop.html" class="game-button">🌟 Bubble Pop</a>
+    <a href="piano.html" class="game-button">🎼 Piano</a>
+    <a href="2048.html" class="game-button">🧮 2048</a>
+    <a href="mathquiz.html" class="game-button">🔢 Math Quiz</a>
+    <a href="patternmatch.html" class="game-button">🧠 Pattern Match</a>
+    <a href="towerblocks.html" class="game-button">📦 Tower Blocks</a>
+    <a href="lightsout.html" class="game-button">🔄 Lights Out</a>
+    <a href="cupcake.html" class="game-button">🧁 Cupcake Decor</a>
+  </div>
+</body>
+</html>
