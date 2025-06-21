@@ -1,0 +1,44 @@
+name: build-spiffs
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-spiffs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Create data folder and move all site files
+      run: |
+        mkdir -p data
+        find . -maxdepth 1 -name "*.html" -exec cp {} data/ \;
+        find . -maxdepth 1 -name "*.css" -exec cp {} data/ \;
+        find . -maxdepth 1 -name "*.js" -exec cp {} data/ \;
+
+    - name: Install build dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y g++ git make
+
+    - name: Clone and build mkspiffs
+      run: |
+        git clone --recursive https://github.com/igrr/mkspiffs.git
+        cd mkspiffs
+        make
+        sudo cp mkspiffs /usr/local/bin/
+
+    - name: Build SPIFFS image
+      run: |
+        mkspiffs -c data -b 4096 -p 256 -s 0x100000 spiffs.bin
+
+    - name: Upload SPIFFS binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: spiffs
+        path: spiffs.bin
