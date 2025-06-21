@@ -17,12 +17,12 @@ jobs:
     - name: Create data folder and move all site files
       run: |
         mkdir -p data
-        echo "Copying HTML/CSS/JS files recursively into ./data/"
+        echo "Copying HTML/CSS/JS files into ./data/"
         find . -type f -iname "*.html" -o -iname "*.css" -o -iname "*.js" -exec cp --parents -v {} data/ \;
 
     - name: Confirm files copied
       run: |
-        echo "Listing contents of ./data:"
+        echo "Files in ./data:"
         find data -type f
 
     - name: Install build dependencies
@@ -39,7 +39,7 @@ jobs:
 
     - name: Build SPIFFS image
       run: |
-        echo "Building SPIFFS binary with size 0x170000"
+        echo "Building spiffs.bin with size 0x170000"
         mkspiffs -c data -b 4096 -p 256 -s 0x170000 spiffs.bin
 
     - name: Upload SPIFFS binary
